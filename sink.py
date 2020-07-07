@@ -28,6 +28,8 @@ import mechanicalsoup
 
 import sys
 
+from decouple import config
+
 
 # Command descriptions
 DESCRIPTION = '''\
@@ -186,8 +188,8 @@ class Facebook:
 
 
 class GoogleContacts:
-    client_id = os.getenv('SINK_CLIENT_ID')
-    client_secret = os.getenv('SINK_CLIENT_SECRET')
+    client_id = config('SINK_CLIENT_ID')
+    client_secret = config('SINK_CLIENT_SECRET')
     scope = 'https://www.google.com/m8/feeds'
     user_agent = ''
     port = PORT
