@@ -26,6 +26,8 @@ import gdata.contacts.client
 import gdata.gauth
 import mechanicalsoup
 
+import sys
+
 
 # Command descriptions
 DESCRIPTION = '''\
@@ -266,6 +268,7 @@ class Sink:
         self.links = self.shelf[LINKS] if LINKS in shelf else {}
         self.checksums = self.shelf[CHECKSUMS] if CHECKSUMS in shelf else {}
         self.timestamps = self.shelf[TIMESTAMPS] if TIMESTAMPS in shelf else {}
+        self.numProcessed = 0
         print("Authorizing Google...")
         self.google = GoogleContacts(shelf)
         print("Getting Google contacts...")
@@ -303,7 +306,17 @@ class Sink:
             user_id = self.facebook.get_user_id(friend_url)
             if not user_id:
                 print("RATE LIMITED: " + self.contacts[contact_url])
+                print("Exiting. Please wait over an hour before trying again!")
+                sys.exit(-1)
                 continue
+            
+            self.numProcessed += 1
+
+            if (self.numProcessed > 50):
+                print("Stopping. Processed 50. Recommend waiting an hour to run again, so do not hit Facebook rate limit.")
+                sys.exit(0)
+                continue
+            
 
             picture = self.facebook.get_profile_picture(user_id)
             if picture:
